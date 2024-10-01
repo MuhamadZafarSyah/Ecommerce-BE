@@ -1,5 +1,7 @@
 import asyncHandler from "../middlewares/asyncHandler.js";
 import Product from "../models/productModel.js";
+import { v2 as cloudinary } from "cloudinary";
+import streamifier from "streamifier";
 
 export const createProducut = asyncHandler(async (req, res) => {
   const newProduct = await Product.create(req.body);
@@ -107,19 +109,26 @@ export const deleteProduct = asyncHandler(async (req, res, next) => {
 });
 
 export const fileUpload = asyncHandler(async (req, res) => {
-  const file = req.file;
+  const stream = cloudinary.uploader.upload_stream(
+    {
+      folder: "products",
+      allowed_formats: ["jpg", "png", "webp"],
+    },
+    function (err, result) {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          message: "Upload Failed",
+          error: err,
+        });
+      }
 
-  if (!file) {
-    res.status(400);
+      return res.status(200).json({
+        message: "Upload Success",
+        url: result.secure_url,
+      });
+    }
+  );
 
-    throw new Error("No image uploaded");
-  }
-
-  const imageFileName = file.filename;
-  const pathImageFile = `/uploads/${imageFileName}`;
-
-  res.status(200).json({
-    message: "Image Upload Success",
-    image: pathImageFile,
-  });
+  streamifier.createReadStream(req.file.buffer).pipe(stream);
 });

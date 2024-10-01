@@ -8,11 +8,19 @@ import productRouter from "./routes/productRouter.js";
 import orderRouter from "./routes/orderRouter.js";
 import helmet from "helmet";
 import ExpressMongoSanitize from "express-mongo-sanitize";
+import { v2 as cloudinary } from "cloudinary";
 
 dotenv.config();
 
 const app = express();
 const port = 3000;
+
+// Configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // MIDDLEWARE
 app.use(express.json());
