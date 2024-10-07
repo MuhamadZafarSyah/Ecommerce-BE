@@ -20,7 +20,15 @@ export const allProduct = asyncHandler(async (req, res) => {
   let query = {};
 
   if (req.query.name) {
-    query.name = { $regex: req.query.name, $options: "i" };
+    // Membuat regex pattern yang lebih fleksibel
+    const searchPattern = req.query.name
+      .split(" ")
+      .map((word) => `(?=.*${word})`)
+      .join("");
+    query.name = {
+      $regex: searchPattern,
+      $options: "i", // 'i' untuk case-insensitive
+    };
   }
 
   if (req.query.category) {
@@ -59,7 +67,6 @@ export const allProduct = asyncHandler(async (req, res) => {
     },
   });
 });
-
 export const detailProduct = asyncHandler(async (req, res) => {
   const detailProduct = await Product.findById(req.params.id);
 
