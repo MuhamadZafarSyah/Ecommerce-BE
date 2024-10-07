@@ -14,21 +14,22 @@ export const createProducut = asyncHandler(async (req, res) => {
 
 export const allProduct = asyncHandler(async (req, res) => {
   const queryObj = { ...req.query };
-  const excludeField = ["page", "limit"];
+  const excludeField = ["page", "limit", "name"];
   excludeField.forEach((element) => delete queryObj[element]);
 
   let query = {};
 
   if (req.query.name) {
     // Membuat regex pattern yang lebih fleksibel
-    const searchPattern = req.query.name
+    const searchTerms = req.query.name
       .split(" ")
-      .map((word) => `(?=.*${word})`)
-      .join("");
-    query.name = {
-      $regex: searchPattern,
-      $options: "i", // 'i' untuk case-insensitive
-    };
+      .filter((term) => term.length > 0);
+    if (searchTerms.length > 0) {
+      query.name = {
+        $regex: searchTerms.map((term) => `(?=.*${term})`).join(""),
+        $options: "i", // 'i' untuk case-insensitive
+      };
+    }
   }
 
   if (req.query.category) {
@@ -38,31 +39,27 @@ export const allProduct = asyncHandler(async (req, res) => {
   // Gabungkan semua filter
   const finalQuery = { ...query, ...queryObj };
 
-  let productQuery = Product.find(finalQuery);
-
   // PAGINATION
-  const page = req.query.page * 1 || 1;
-  const limitData = req.query.limit * 1 || 10;
+  const page = parseInt(req.query.page) || 1;
+  const limitData = parseInt(req.query.limit) || 10;
   const skipData = (page - 1) * limitData;
 
-  productQuery = productQuery.skip(skipData).limit(limitData);
-
   const countProduct = await Product.countDocuments(finalQuery);
+  const totalPage = Math.ceil(countProduct / limitData);
 
-  if (req.query.page && skipData >= countProduct) {
+  if (page > totalPage) {
     res.status(404);
     throw new Error("This page doesn't exist");
   }
 
-  const data = await productQuery;
-  const totalPage = Math.ceil(countProduct / limitData);
+  const data = await Product.find(finalQuery).skip(skipData).limit(limitData);
 
   res.status(200).json({
     message: "Get All Product Success",
     data,
     pagination: {
       totalPage,
-      page,
+      currentPage: page,
       totalProduct: countProduct,
     },
   });
