@@ -13,44 +13,42 @@ export const createProducut = asyncHandler(async (req, res) => {
 });
 
 export const allProduct = asyncHandler(async (req, res) => {
-  // REQUEST QUERY
   const queryObj = { ...req.query };
-
-  // Fungsi untuk mengabaikan jika ada req page dan limit
   const excludeField = ["page", "limit"];
   excludeField.forEach((element) => delete queryObj[element]);
 
-  let query;
+  let query = {};
 
   if (req.query.name) {
-    query = Product.find({
-      name: {
-        $regex: req.query.name,
-        $options: "i",
-      },
-    });
-  } else {
-    // Buat query untuk mengambil data dari database
-    query = Product.find(queryObj);
+    query.name = { $regex: req.query.name, $options: "i" };
   }
+
+  if (req.query.category) {
+    query.category = req.query.category;
+  }
+
+  // Gabungkan semua filter
+  const finalQuery = { ...query, ...queryObj };
+
+  let productQuery = Product.find(finalQuery);
 
   // PAGINATION
   const page = req.query.page * 1 || 1;
   const limitData = req.query.limit * 1 || 10;
   const skipData = (page - 1) * limitData;
 
-  query = query.skip(skipData).limit(limitData);
+  productQuery = productQuery.skip(skipData).limit(limitData);
 
-  let countProduct = await Product.countDocuments(queryObj);
-  if (req.query.page) {
-    if (skipData >= countProduct) {
-      res.status(404);
-      throw new Error("This page doesnt exist");
-    }
+  const countProduct = await Product.countDocuments(finalQuery);
+
+  if (req.query.page && skipData >= countProduct) {
+    res.status(404);
+    throw new Error("This page doesn't exist");
   }
 
-  const data = await query;
+  const data = await productQuery;
   const totalPage = Math.ceil(countProduct / limitData);
+
   res.status(200).json({
     message: "Get All Product Success",
     data,
