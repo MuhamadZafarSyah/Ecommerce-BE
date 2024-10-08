@@ -7,13 +7,11 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
   name: {
     type: String,
-    required: [true, "Name is required"],
-    unique: [true, "Username is already taken"],
+    required: [true, "KOcak"],
   },
   email: {
     type: String,
     required: [true, "Email is required"],
-    unique: [true, "Email is already taken"],
     validate: [validator.isEmail, "This type must be valid email"],
   },
 
@@ -34,12 +32,13 @@ userSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-/**
- * Compares a given password with the user's hashed password.
- *
- * @param {string} reqBody - The password to compare with the user's password.
- * @return {Promise<boolean>} True if the passwords match, false otherwise.
- */
+userSchema.post("save", function (error, doc, next) {
+  if (error.name === "MongoServerError" && error.code === 11000) {
+    next(new Error("email must be unique"));
+  } else {
+    next();
+  }
+});
 userSchema.methods.comparePassword = async function (reqBody) {
   return await bcrypt.compare(reqBody, this.password);
 };

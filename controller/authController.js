@@ -41,7 +41,7 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 // MEMBUAT FUNGSI REGISTER, KETIKA MEMBUAT USER PERTAMA KALI ROLE NYA ADALAH ADMIN DAN SELANJUTNYA USER, DAN FUNGSI INI AKAN DI EKSEKUSI DENGAN MENGGUNAKAN ASYNC HANDLER, DATA NYA DI AMBIL DARI REQUEST BODY
-export const registerUser = asyncHandler(async (req, res) => {
+export const registerUser = asyncHandler(async (req, res, error, doc, next) => {
   const isAdmin = (await User.countDocuments()) === 0;
 
   const role = isAdmin ? "admin" : "user";

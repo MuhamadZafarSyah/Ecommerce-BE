@@ -41,7 +41,7 @@ export const allProduct = asyncHandler(async (req, res) => {
 
   // PAGINATION
   const page = parseInt(req.query.page) || 1;
-  const limitData = parseInt(req.query.limit) || 10;
+  const limitData = parseInt(req.query.limit) || 6;
   const skipData = (page - 1) * limitData;
 
   const countProduct = await Product.countDocuments(finalQuery);
