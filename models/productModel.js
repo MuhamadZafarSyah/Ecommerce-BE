@@ -5,16 +5,16 @@ const { Schema } = mongoose;
 const productSchema = new Schema({
   name: {
     type: String,
-    required: [true, "Name is required"],
+    required: [true, "Nama harus diisi"],
   },
   price: {
     type: Number,
-    required: [true, "Price is required"],
+    required: [true, "Harga harus diisi"],
   },
 
   description: {
     type: String,
-    required: [true, "Description is required"],
+    required: [true, "Deskripsi harus diisi"],
   },
 
   image: {
@@ -24,7 +24,7 @@ const productSchema = new Schema({
 
   category: {
     type: String,
-    required: [true, "Category is required"],
+    required: [true, "Kategori harus diisi"],
     enum: ["sepatu", "kemeja", "baju", "celana", "topi", "hoodie"],
   },
 

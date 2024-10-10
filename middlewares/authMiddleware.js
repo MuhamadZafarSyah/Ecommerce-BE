@@ -16,10 +16,10 @@ export const protectedMiddleware = asyncHandler(async (req, res, next) => {
       next();
     } catch (error) {
       res.status(401);
-      throw new Error("Not authorized, token failed");
+      throw new Error("Tidak diizinkan, token gagal");
     }
   } else {
-    res.status(401).json({ message: "Not authorized, no token" });
+    res.status(401).json({ message: "Tidak diizinkan, tidak ada token" });
   }
 });
 
@@ -28,8 +28,7 @@ export const adminMidldeware = (req, res, next) => {
     next();
   } else {
     res.status(401);
-
-    throw new Error("Not authorized as admin");
+    throw new Error("Tidak di izinkan, anda bukan admin!");
   }
 };
 

@@ -21,23 +21,23 @@ const orderSchema = new Schema({
   },
   firstName: {
     type: String,
-    required: [true, "First Name is required"],
+    required: [true, "Nama depan harus diisi"],
   },
   lastName: {
     type: String,
-    required: [true, "Last Name is required"],
+    required: [true, "Nama belakang harus diisi"],
   },
   email: {
     type: String,
-    required: [true, "Email is required"],
+    required: [true, "Email harus diisi"],
   },
   phone: {
     type: String,
-    required: [true, "Phone is required"],
+    required: [true, "Nomor handphone harus diisi"],
   },
   total: {
     type: Number,
-    required: [true, "Total is required"],
+    required: [true, "Total harus diisi"],
   },
   status: {
     type: String,

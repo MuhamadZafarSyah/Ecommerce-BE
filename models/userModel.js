@@ -7,18 +7,18 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
   name: {
     type: String,
-    required: [true, "KOcak"],
+    required: [true, "Nama harus diisi"],
   },
   email: {
     type: String,
-    required: [true, "Email is required"],
-    validate: [validator.isEmail, "This type must be valid email"],
+    required: [true, "Email harus diisi"],
+    validate: [validator.isEmail, "Tipe ini harus berupa email yang valid"],
   },
 
   password: {
     type: String,
-    required: [true, "Password is required"],
-    minLength: [6, "password must at least 6 length"],
+    required: [true, "Password harus diisi"],
+    minLength: [6, "Password minimal 6 karakter"],
   },
   role: {
     type: String,

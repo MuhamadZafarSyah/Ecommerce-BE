@@ -60,7 +60,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   // VALIDASI APAKAH EMAIL DAN PASSWORD DIISI ATAU TIDAK
   if (!req.body.email || !req.body.password) {
     res.status(400);
-    throw new Error("Email and password must be require");
+    throw new Error("Email dan password harus diisi");
   }
 
   // CEK APAKAH EMAIL YANG DI INPUT ADA DI DATABASE ATAU TIDAK
@@ -75,7 +75,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   } else {
     res.status(400);
 
-    throw new Error("Invalid email or password");
+    throw new Error("Email atau password salah!");
   }
 });
 
@@ -88,7 +88,7 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(404);
-    throw new Error("user not found");
+    throw new Error("Pengguna tidak ditemukan");
   }
 });
 
@@ -99,6 +99,6 @@ export const logoutUser = async (req, res) => {
   });
 
   res.status(200).json({
-    message: "Logout Success",
+    message: "Logout Berhasil",
   });
 };

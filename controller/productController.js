@@ -7,7 +7,7 @@ export const createProducut = asyncHandler(async (req, res) => {
   const newProduct = await Product.create(req.body);
 
   res.status(200).json({
-    message: "Create Product Success",
+    message: "Berhasil membuat data produk",
     data: newProduct,
   });
 });
@@ -36,7 +36,6 @@ export const allProduct = asyncHandler(async (req, res) => {
     query.category = req.query.category;
   }
 
-  // Gabungkan semua filter
   const finalQuery = { ...query, ...queryObj };
 
   // PAGINATION
@@ -49,13 +48,13 @@ export const allProduct = asyncHandler(async (req, res) => {
 
   if (page > totalPage) {
     res.status(404);
-    throw new Error("This page doesn't exist");
+    throw new Error("Halaman ini tidak tersedia");
   }
 
   const data = await Product.find(finalQuery).skip(skipData).limit(limitData);
 
   res.status(200).json({
-    message: "Get All Product Success",
+    message: "Berhasil mendapatkan semua data produk",
     data,
     pagination: {
       totalPage,
@@ -69,12 +68,12 @@ export const detailProduct = asyncHandler(async (req, res) => {
 
   if (detailProduct) {
     res.status(200).json({
-      message: "Get Detail Product Success",
+      message: "Berhasil mendapatkan detail data produk",
       data: detailProduct,
     });
   } else {
     res.status(404).json({
-      message: "Product Not Found",
+      message: "Data produk tidak ditemukan",
     });
   }
 });
@@ -89,12 +88,12 @@ export const updateProduct = asyncHandler(async (req, res) => {
 
   if (!updateProduct) {
     res.status(404).json({
-      message: "Product Not Found",
+      message: "Data produk tidak ditemukan",
     });
   }
 
   res.status(200).json({
-    message: "Update Product Success",
+    message: "Berhasil update data produk",
     data: updateProduct,
   });
 });

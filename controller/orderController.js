@@ -7,7 +7,7 @@ export const createOrder = asyncHandler(async (req, res) => {
 
   if (!cartItem || cartItem.length < 1) {
     res.status(400);
-    throw new Error("Cart is empty");
+    throw new Error("Keranjang Kosong");
   }
 
   let orderItem = [];
@@ -17,7 +17,7 @@ export const createOrder = asyncHandler(async (req, res) => {
     const productData = await Product.findOne({ _id: cart.product });
     if (!productData) {
       res.status(404);
-      throw new Error("Product not found");
+      throw new Error("Produk tidak ditemukan");
     }
 
     const { name, price, _id } = productData;
@@ -44,7 +44,7 @@ export const createOrder = asyncHandler(async (req, res) => {
   });
 
   return res.status(200).json({
-    message: "Create Order Success",
+    message: "Berhasil membuat orderan",
     order,
     total,
     // data: newOrder,
@@ -55,7 +55,7 @@ export const allOrder = asyncHandler(async (req, res) => {
   const orders = await Order.find();
 
   return res.status(200).json({
-    message: "Get All Order Success",
+    message: "Berhasil mendapat semua orderan",
     data: orders,
   });
 });
@@ -65,12 +65,12 @@ export const detailOrder = asyncHandler(async (req, res) => {
 
   if (detailOrder) {
     res.status(200).json({
-      message: "Get Detail Order Success",
+      message: "Berhasil mendapat detail orderan",
       data: detailOrder,
     });
   } else {
     res.status(404);
-    throw new Error("Order not found");
+    throw new Error("Orderan tidak ditemukan ");
   }
 
   // res.send("Get Detail Order Success");
@@ -80,7 +80,7 @@ export const currentUserOrder = asyncHandler(async (req, res) => {
   const order = await Order.find({ user: req.user.id });
 
   return res.status(200).json({
-    message: "Get Current User Order Success",
+    message: "Berhasil mendapat orderan user saat ini",
     data: order,
   });
 });
@@ -90,12 +90,12 @@ export const deleteOrder = asyncHandler(async (req, res) => {
 
   if (!deleteOrder) {
     return next({
-      message: "Order Not Found",
+      message: "Orderan tidak ditemukan",
       statusCode: 404,
     });
   }
 
   return res.status(200).json({
-    message: "Delete Order Success",
+    message: "Berhasil hapus orderan",
   });
 });
