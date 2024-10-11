@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-let snap = new midtransClient.Snap({
+let snap = new Midtrans.Snap({
   // Set to true if you want Production Environment (accept real transaction).
   isProduction: false,
   serverKey: process.env.MIDTRANS_SERVER_KEY,
