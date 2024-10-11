@@ -6,6 +6,7 @@ import {
   detailOrder,
   currentUserOrder,
   deleteOrder,
+  callbackPayment,
 } from "../controller/orderController.js";
 
 import {
@@ -26,5 +27,7 @@ router.get("/:id", protectedMiddleware, adminMidldeware, detailOrder);
 router.get("/current/user", protectedMiddleware, currentUserOrder);
 
 router.delete("/:id", protectedMiddleware, deleteOrder);
+
+router.post("/callback/midtrans", callbackPayment);
 
 export default router;

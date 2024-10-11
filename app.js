@@ -34,6 +34,36 @@ app.listen(port, () => {
   console.log(`Express listening on port ${port}`);
 });
 
+app.get("/", function (req, res) {
+  res.status(200).json({
+    message: "Selamat datang di Ecommrce kami",
+    developer: "muhamad Zafar Syah",
+    auth: {
+      name: "Authentikasi",
+      request: {
+        url: "https://ecommercebe.vercel.app/api/v1/auth",
+        path: ["login", "register", "logout", "getuser"],
+      },
+    },
+    produk: {
+      name: "CRUD Produk",
+      request: {
+        url: "https://ecommercebe.vercel.app/api/v1",
+        path: ["product", "product/1"],
+        method: ["GET", "POST", "PUT", "DELETE"],
+      },
+    },
+    order: {
+      name: "CRUD Order",
+      request: {
+        url: "https://ecommercebe.vercel.app/api/v1",
+        path: ["order", "order/current/user"],
+        method: ["GET", "POST", "DELETE"],
+      },
+    },
+  });
+});
+
 // PARENT DARI ROUTE AUTH
 app.use("/api/v1/auth", authRouter);
 
