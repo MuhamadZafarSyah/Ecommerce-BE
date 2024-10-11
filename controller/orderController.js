@@ -40,7 +40,6 @@ export const createOrder = asyncHandler(async (req, res) => {
     };
 
     const shortName = name.substring(0, 30);
-
     const singleProductMidtrans = {
       id: _id,
       name: shortName,
@@ -110,7 +109,7 @@ export const detailOrder = asyncHandler(async (req, res) => {
     throw new Error("Orderan tidak ditemukan ");
   }
 
-  // res.send("Get Detail Order Success");
+  // res.send("Get Detail Order success");
 });
 
 export const currentUserOrder = asyncHandler(async (req, res) => {
@@ -146,17 +145,16 @@ export const callbackPayment = asyncHandler(async (req, res) => {
 
   const orderData = await Order.findById(orderId);
 
+  console.log(orderData);
+
   if (!orderData) {
     res.status(404);
     throw new Error("Orderan tidak ditemukan");
   }
   // Sample transactionStatus handling logic
 
-  if (transactionStatus == "capture" || transactionStatus == "settlement") {
+  if (transactionStatus == "capture" || transactionStatus == "settlement")
     if (fraudStatus == "accept") {
-      // TODO set transaction status on your database to 'success'
-      // and response with 200 OK
-
       const orderProduct = orderData.itemsDetail;
 
       for (const itemProduct of orderProduct) {
@@ -164,31 +162,29 @@ export const callbackPayment = asyncHandler(async (req, res) => {
 
         if (!productData) {
           res.status(404);
-          throw new Error("Product tidak ditemukan");
+          throw new Error("Produk tidak ditemukan");
         }
 
-        productData.stock += itemProduct.quantity;
+        productData.stock = productData.stock - itemProduct.quantity;
 
         await productData.save();
       }
-
-      orderData.status = "Success";
+      orderData.status = "success";
+      await orderData.save();
+    } else if (
+      fraudStatus == "cancel" ||
+      fraudStatus == "deny" ||
+      fraudStatus == "expire"
+    ) {
+      orderData.status = "failed";
+      await orderData.save();
+    } else if (fraudStatus == "pending") {
+      orderData.status == "pending";
+      await orderData.save();
     }
-  } else if (
-    transactionStatus == "cancel" ||
-    transactionStatus == "deny" ||
-    transactionStatus == "expire"
-  ) {
-    // TODO set transaction status on your database to 'failure'
-    // and response with 200 OK
 
-    orderData.status = "Failed";
-  } else if (transactionStatus == "pending") {
-    // TODO set transaction status on your database to 'pending' / waiting payment
-    // and response with 200 OK
-
-    orderData.status = "Pending";
-  }
+  await orderData.save();
+  console.log("success");
 
   res.status(200).send("Payment notif berhasil");
 });
