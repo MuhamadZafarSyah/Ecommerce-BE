@@ -1,6 +1,16 @@
 import asyncHandler from "../middlewares/asyncHandler.js";
 import Product from "../models/productModel.js";
 import Order from "../models/orderModel.js";
+import Midtrans from "midtrans-client";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+let snap = new midtransClient.Snap({
+  // Set to true if you want Production Environment (accept real transaction).
+  isProduction: false,
+  serverKey: process.env.MIDTRANS_SERVER_KEY,
+});
 
 export const createOrder = asyncHandler(async (req, res) => {
   const { email, firstName, lastName, phone, cartItem } = req.body;
@@ -11,6 +21,7 @@ export const createOrder = asyncHandler(async (req, res) => {
   }
 
   let orderItem = [];
+  let orderMidtrans = [];
   let total = 0;
 
   for (const cart of cartItem) {
@@ -28,7 +39,17 @@ export const createOrder = asyncHandler(async (req, res) => {
       product: _id,
     };
 
+    const shortName = name.substring(0, 30);
+
+    const singleProductMidtrans = {
+      id: _id,
+      name: shortName,
+      price,
+      quantity: cart.quantity,
+    };
+
     orderItem = [...orderItem, singleProduct];
+    orderMidtrans = [...orderMidtrans, singleProductMidtrans];
 
     total += cart.quantity * price;
   }
@@ -43,11 +64,27 @@ export const createOrder = asyncHandler(async (req, res) => {
     phone,
   });
 
+  let parameter = {
+    transaction_details: {
+      order_id: order._id,
+      gross_amount: total,
+    },
+    itemsDetail: orderMidtrans,
+    customer_details: {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      phone: phone,
+    },
+  };
+
+  const token = await snap.createTransaction(parameter);
+
   return res.status(200).json({
     message: "Berhasil membuat orderan",
     order,
     total,
-    // data: newOrder,
+    token,
   });
 });
 
