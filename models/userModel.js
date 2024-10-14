@@ -34,7 +34,7 @@ userSchema.pre("save", async function () {
 
 userSchema.post("save", function (error, doc, next) {
   if (error.name === "MongoServerError" && error.code === 11000) {
-    next(new Error("email must be unique"));
+    next(new Error("Email sudah digunakan"));
   } else {
     next();
   }
